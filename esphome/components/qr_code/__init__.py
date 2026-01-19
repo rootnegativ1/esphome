@@ -1,6 +1,6 @@
 import esphome.codegen as cg
 import esphome.config_validation as cv
-from esphome.const import CONF_ID, CONF_VALUE
+from esphome.const import CONF_BORDER, CONF_ID, CONF_VALUE
 
 CONF_SCALE = "scale"
 CONF_ECC = "ecc"
@@ -27,6 +27,7 @@ CONFIG_SCHEMA = cv.ensure_list(
             cv.Required(CONF_ID): cv.declare_id(QRCode),
             cv.Required(CONF_VALUE): cv.string,
             cv.Optional(CONF_ECC, default="LOW"): cv.enum(ECC, upper=True),
+            cv.Optional(CONF_BORDER, default=0): cv.int_range(min=0, max=20),
         }
     )
 )
@@ -39,6 +40,7 @@ async def to_code(config):
         var = cg.new_Pvariable(entry[CONF_ID])
         cg.add(var.set_value(entry[CONF_VALUE]))
         cg.add(var.set_ecc(ECC[entry[CONF_ECC]]))
+        cg.add(var.set_border(entry[CONF_BORDER]))
         await cg.register_component(var, entry)
 
     cg.add_define("USE_QR_CODE")

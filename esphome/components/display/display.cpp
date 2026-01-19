@@ -560,8 +560,8 @@ void Display::legend(int x, int y, graph::Graph *graph, Color color_on) { graph-
 #endif  // USE_GRAPH
 
 #ifdef USE_QR_CODE
-void Display::qr_code(int x, int y, qr_code::QrCode *qr_code, Color color_on, int scale) {
-  qr_code->draw(this, x, y, color_on, scale);
+void Display::qr_code(int x, int y, qr_code::QrCode *qr_code, Color color_on, Color color_off, int scale) {
+  qr_code->draw(this, x, y, color_on, color_off, scale);
 }
 #endif  // USE_QR_CODE
 

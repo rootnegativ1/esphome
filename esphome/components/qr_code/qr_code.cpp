@@ -44,8 +44,8 @@ void QrCode::generate_qr_code() {
   }
 }
 
-void QrCode::draw(display::Display *buff, uint16_t x_offset, uint16_t y_offset, Color color, int scale) {
-  ESP_LOGV(TAG, "Drawing QR code at (%d, %d)", x_offset, y_offset);
+void QrCode::draw(display::Display *buff, uint16_t x_offset, uint16_t y_offset, Color color, Color bg_color, int scale) {
+  ESP_LOGV(TAG, "Drawing QR code at (%d, %d) with scale %u", x_offset, y_offset, scale);
 
   if (this->needs_update_) {
     this->generate_qr_code();
@@ -53,11 +53,21 @@ void QrCode::draw(display::Display *buff, uint16_t x_offset, uint16_t y_offset, 
   }
 
   uint8_t qrcode_width = qrcodegen_getSize(this->qr_);
+  uint8_t border = this->border_;
 
-  for (int y = 0; y < qrcode_width * scale; y++) {
-    for (int x = 0; x < qrcode_width * scale; x++) {
-      if (qrcodegen_getModule(this->qr_, x / scale, y / scale)) {
-        buff->draw_pixel_at(x_offset + x, y_offset + y, color);
+  for (int y = 0; y < qrcode_width * scale + 2 * border; y++) {
+    for (int x = 0; x < qrcode_width * scale + 2 * border; x++) {
+      if ((x < border)
+          || (x >= qrcode_width * scale + border)
+          || (y < border)
+          || (y >= qrcode_width * scale + border)) {
+        buff->draw_pixel_at(x_offset + x, y_offset + y, bg_color); // draw OFF color for border
+      } else {
+        if (qrcodegen_getModule(this->qr_, (x - border) / scale, (y - border) / scale)) {
+          buff->draw_pixel_at(x_offset + x, y_offset + y, color); // draw ON color for code
+        } else {
+          buff->draw_pixel_at(x_offset + x, y_offset + y, bg_color); // draw OFF color for background
+        }
       }
     }
   }

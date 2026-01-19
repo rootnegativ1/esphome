@@ -15,7 +15,7 @@ class Display;
 namespace qr_code {
 class QrCode : public Component {
  public:
-  void draw(display::Display *buff, uint16_t x_offset, uint16_t y_offset, Color color, int scale);
+  void draw(display::Display *buff, uint16_t x_offset, uint16_t y_offset, Color color, Color bg_color, int scale);
 
   void dump_config() override;
 
@@ -26,11 +26,16 @@ class QrCode : public Component {
 
   uint8_t get_size();
 
+  void set_border(uint8_t border) { this->border_ = border; }
+
+  uint8_t get_border() { return this->border_; }
+
  protected:
   std::string value_;
   qrcodegen_Ecc ecc_;
   bool needs_update_ = true;
   uint8_t qr_[qrcodegen_BUFFER_LEN_MAX];
+  uint8_t border_;
 };
 }  // namespace qr_code
 }  // namespace esphome
